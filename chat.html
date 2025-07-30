@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Чат</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+<h3>Добро пожаловать, {{ username }}</h3>
+<div id="chat" style="border:1px solid #000;height:300px;overflow:auto;margin-bottom:10px;">
+    {% for msg in messages %}
+        <p>{{ msg }}</p>
+    {% endfor %}
+</div>
+<input id="msg" placeholder="Сообщение...">
+<button onclick="sendMessage()">Отправить</button>
+
+<script>
+    var socket = io();
+    var chat = document.getElementById('chat');
+
+    socket.on('message', function(msg) {
+        let p = document.createElement('p');
+        p.textContent = msg;
+        chat.appendChild(p);
+        chat.scrollTop = chat.scrollHeight;
+    });
+
+    function sendMessage() {
+        var msg = document.getElementById('msg').value;
+        if (msg.trim() !== '') {
+            socket.emit('message', msg);
+            document.getElementById('msg').value = '';
+        }
+    }
+</script>
+</body>
+</html>
